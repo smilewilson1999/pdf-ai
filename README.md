@@ -16,6 +16,7 @@ An intelligent PDF chat application that allows you to upload PDF documents and 
 </p>
 
 ---
+<img width="1920" height="1440" alt="737shots_so" src="https://github.com/user-attachments/assets/2eed4eca-39a3-4ebf-8d9f-787ec5db6df3" />
 
 ## 🌟 Core Features
 
