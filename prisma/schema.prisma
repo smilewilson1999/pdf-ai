@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// npx prisma db push
+// npx prisma generate (prod: npx prisma migrate dev)
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// model Post {
+//     id        Int      @id @default(autoincrement())
+//     name      String
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+
+//     @@index([name])
+// }
+
+model User {
+    id    String @id @unique // kinde id
+    email String @unique
+
+    Files File[]
+    Messages Message[]
+
+    stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+    stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+    stripePriceId          String?   @map(name: "stripe_price_id")
+    stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+
+    @@index([email])
+}
+
+enum UploadStatus {
+    PENDING
+    PROCESSING
+    SUCCESS
+    FAILED
+}
+
+model File {
+    id   String @id @default(cuid())
+    name String
+
+    uploadStatus UploadStatus @default(PENDING)
+
+    url String @unique
+    key String @unique
+    Messages Message[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    User      User?    @relation(fields: [userId], references: [id])
+    userId    String?
+}
+
+model Message {
+    id        String   @id @default(cuid())
+    text      String   @db.Text
+    isUserMessage Boolean
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    User      User?    @relation(fields: [userId], references: [id])
+    userId    String?
+    File      File     @relation(fields: [fileId], references: [id])
+    fileId    String
+
+    @@index([userId])
+    @@index([fileId])
+}
